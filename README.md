@@ -1,4 +1,4 @@
-# Visual-Construction-Clothing-Classification-
+# Visual-Construction-Clothing-Classifier
 
 ## Prerequisites:
 
