@@ -17,12 +17,8 @@ The dataset should have following structure, where all the images belonging to o
 
     .
     |-- path_to_folders_with_images
-    |    |-- class1
-    |    |-- class2
-    |    |-- class3
-    ...
-    |    └-- classN
-
+         |-- positive class
+         └-- negtive class 
 
 ## Prerequisites:
 
