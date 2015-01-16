@@ -1,5 +1,7 @@
 # Visual-Construction-Clothing-Classifier
 
+This reposity is for reasearch purpose based on SVM.
+and test for variety features combination for classify construction clothing.
 
 ### Example use:
   
