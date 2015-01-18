@@ -2,6 +2,7 @@ from __future__ import division
 import cv2
 import LBP
 from skimage.feature import hog
+from sklearn.decomposition import PCA
 
 
 class Extractor:
@@ -33,6 +34,7 @@ class Extractor:
 
     def setImgPath(self, imgPath):
         self.img = cv2.imread(imgPath)
+        self.grayImg = cv2.imread(imgPath, 0)
         self.path = imgPath
         #print imgPath
         #self.img = cv2.resize(self.img, (self.scale_Height, self.scale_Width))
@@ -68,7 +70,43 @@ class Extractor:
                 fv = fv + '%d:%f ' % (index, eachBin)
                 index = index + 1
 
-        elif feature_type == 'hs+lbp':
+        elif feature_type == 'hog':
+            fd = hog(self.grayImg, orientations=8, pixels_per_cell=(16, 16),cells_per_block=(1, 1), visualise=False, normalise=True)
+            #pca = PCA(n_components=200)
+            #fd = pca.fit_transform(fd)
+
+            for eachBin in fd:
+                fv = fv + '%d:%f ' % (index, eachBin)
+                index = index + 1
+
+        elif feature_type == 'hog+hs':
+
+            fd = hog(self.grayImg, orientations=8, pixels_per_cell=(16, 16),cells_per_block=(1, 1), visualise=False, normalise=True)
+            pca = PCA(n_components=200)
+            fd = pca.fit_transform(fd)
+
+            hsvImg = cv2.cvtColor(self.img,cv2.COLOR_BGR2HSV)
+            h_hist = cv2.calcHist([hsvImg], [0], None, [h_bins], [0,180])
+            s_hist = cv2.calcHist([hsvImg], [1], None, [s_bins], [0,255])
+
+            #normalize histogram
+            h_hist = [element/sum(h_hist) for element in h_hist]
+            s_hist = [element/sum(s_hist) for element in s_hist]
+
+            for eachBin in fd:
+                fv = fv + '%d:%f ' % (index, eachBin)
+                index = index + 1
+
+            for eachBin in h_hist:
+                fv = fv + '%d:%f ' % (index, eachBin)
+                index = index + 1
+
+            for eachBin in s_hist:
+                fv = fv + '%d:%f ' % (index, eachBin)
+                index = index + 1
+
+
+        elif feature_type == 'lbp+hs':
             hsvImg = cv2.cvtColor(self.img,cv2.COLOR_BGR2HSV)
             h_hist = cv2.calcHist([hsvImg], [0], None, [h_bins], [0,180])
             s_hist = cv2.calcHist([hsvImg], [1], None, [s_bins], [0,255])
@@ -81,6 +119,10 @@ class Extractor:
             lbp_hist = lbp.compute_LBP_hist(self.img)
             lbp_hist = [element/sum(lbp_hist) for element in lbp_hist]
 
+            for eachBin in lbp_hist:
+                fv = fv + '%d:%f ' % (index, eachBin)
+                index = index + 1
+
             for eachBin in h_hist:
                 fv = fv + '%d:%f ' % (index, eachBin)
                 index = index + 1
@@ -89,7 +131,56 @@ class Extractor:
                 fv = fv + '%d:%f ' % (index, eachBin)
                 index = index + 1
 
+        elif feature_type == 'hog+lbp':
+
+            fd = hog(self.grayImg, orientations=8, pixels_per_cell=(16, 16),cells_per_block=(1, 1), visualise=False, normalise=True)
+            pca = PCA(n_components=200)
+            fd = pca.fit_transform(fd)
+
+            lbp = LBP.LBP()
+            lbp_hist = lbp.compute_LBP_hist(self.img)
+            lbp_hist = [element/sum(lbp_hist) for element in lbp_hist]
+
+            for eachBin in fd:
+                fv = fv + '%d:%f ' % (index, eachBin)
+                index = index + 1
+
             for eachBin in lbp_hist:
+                fv = fv + '%d:%f ' % (index, eachBin)
+                index = index + 1
+
+        elif feature_type == 'lbp+hog+hs':
+
+            fd = hog(self.grayImg, orientations=8, pixels_per_cell=(16, 16),cells_per_block=(1, 1), visualise=False, normalise=True)
+            pca = PCA(n_components=200)
+            fd = pca.fit_transform(fd)
+
+            lbp = LBP.LBP()
+            lbp_hist = lbp.compute_LBP_hist(self.img)
+            lbp_hist = [element/sum(lbp_hist) for element in lbp_hist]
+
+            hsvImg = cv2.cvtColor(self.img,cv2.COLOR_BGR2HSV)
+            h_hist = cv2.calcHist([hsvImg], [0], None, [h_bins], [0,180])
+            s_hist = cv2.calcHist([hsvImg], [1], None, [s_bins], [0,255])
+
+            #normalize histogram
+            h_hist = [element/sum(h_hist) for element in h_hist]
+            s_hist = [element/sum(s_hist) for element in s_hist]
+
+            for eachBin in fd:
+                fv = fv + '%d:%f ' % (index, eachBin)
+                index = index + 1
+
+            for eachBin in lbp_hist:
+                fv = fv + '%d:%f ' % (index, eachBin)
+                index = index + 1
+
+
+            for eachBin in h_hist:
+                fv = fv + '%d:%f ' % (index, eachBin)
+                index = index + 1
+
+            for eachBin in s_hist:
                 fv = fv + '%d:%f ' % (index, eachBin)
                 index = index + 1
 

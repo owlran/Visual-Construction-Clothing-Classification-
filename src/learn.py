@@ -9,7 +9,7 @@ import libsvm
 EXTENSIONS = [".jpg", ".bmp", ".png", ".tif", ".tiff"]
 DATABASEPATH = '../dataset'
 HISTOGRAMS_FILE = 'trainingdata.svm'
-FEATURE_TYPE = 'hs'
+FEATURE_TYPE = 'hog'
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='train a visual bag of words model')
