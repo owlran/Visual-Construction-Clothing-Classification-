@@ -9,7 +9,7 @@ import libsvm
 EXTENSIONS = [".jpg", ".bmp", ".png", ".tif", ".tiff"]
 DATABASEPATH = '../dataset'
 HISTOGRAMS_FILE = 'trainingdata.svm'
-FEATURE_TYPE = 'hog'
+FEATURE_TYPE = 'lbp+hs'
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='train a visual bag of words model')
@@ -71,7 +71,7 @@ if __name__=="__main__":
         for imgPath in cat_files:
             extractor = Extractor()
             extractor.setImgPath(imgPath)
-            fv = extractor.extract_feature(label, FEATURE_TYPE)
+            fv = extractor.extract_feature(label, FEATURE_TYPE,h_bins=128,s_bins=32)
             f.write(fv+'\n')
     f.close()
 #        cat_features = extractSift(cat_files)
